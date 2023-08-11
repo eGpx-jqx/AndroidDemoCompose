@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androiddemo.ui.theme.AndroidDemoTheme
 import com.example.androiddemo.widget.SearchBox
+import com.example.androiddemo.widget.TriStateCheckBox
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
 
-    SearchBox(name)
+    TriStateCheckBox()
 }
 
 @Preview(showBackground = true)
