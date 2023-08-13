@@ -2,10 +2,7 @@ package com.example.androiddemo.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TriStateCheckbox
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,3 +56,33 @@ fun TriStateCheckBox() {
 
     }
 }
+
+
+/**
+ * 单选开关
+ */
+@Composable
+fun SwitchDemo() {
+    val checked = remember { mutableStateOf(true) }
+
+    Switch(
+        checked = checked.value,
+        onCheckedChange = { checked.value = it }
+    )
+}
+
+
+/**
+ * 滑竿组件
+ */
+fun SliderDemo() {
+
+    var sliderPo = remember { mutableStateOf(0f) }
+    Text(text = "%.1f".format(sliderPo.value * 100)+"%")
+    Slider(
+        value = sliderPo.value,
+        onValueChange = { sliderPo.value = it }
+    )
+}
+
+
