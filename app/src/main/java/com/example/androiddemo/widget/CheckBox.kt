@@ -27,6 +27,10 @@ fun SingleCheckBox() {
     )
 }
 
+
+/**
+ * 三选
+ */
 @Composable
 fun TriStateCheckBox() {
 
