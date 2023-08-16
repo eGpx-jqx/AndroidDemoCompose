@@ -75,6 +75,7 @@ fun SwitchDemo() {
 /**
  * 滑竿组件
  */
+@Composable
 fun SliderDemo() {
 
     var sliderPo = remember { mutableStateOf(0f) }

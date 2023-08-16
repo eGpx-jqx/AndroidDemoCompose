@@ -51,6 +51,7 @@ fun IconButtons() {
     /**
      * 交互式button， 点击边框变为绿色
      */
+    @Composable
     fun interactionButton() {
 
         val interactionSource = remember { MutableInteractionSource() }
