@@ -13,6 +13,7 @@ import com.example.androiddemo.ui.theme.AndroidDemoTheme
 import com.example.androiddemo.widget.AlertDialogDemo
 import com.example.androiddemo.widget.AnimatedProgressDemo
 import com.example.androiddemo.widget.ArticleCardDemo
+import com.example.androiddemo.widget.ArticleCardDemoPeople
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +32,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
 
-    ArticleCardDemo()
+    ArticleCardDemoPeople()
 }
 
 @Preview(showBackground = true)
