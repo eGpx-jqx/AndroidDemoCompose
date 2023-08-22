@@ -236,3 +236,16 @@ fun ConstraintLayoutDemo() {
 
 }
 
+/**
+ * compose脚手架示例
+ */
+fun scaffoldDemo() {
+
+    Scaffold(
+        topBar = {},
+        bottomBar = {}
+    ) {
+        it.calculateBottomPadding()
+    }
+}
+
