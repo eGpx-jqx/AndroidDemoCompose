@@ -1,22 +1,32 @@
 package com.example.androiddemo.widget
 
+import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.androiddemo.MainActivity
 import com.example.androiddemo.R
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 
 
 /**
@@ -178,14 +188,14 @@ fun ConstraintLayoutDemo() {
                 text = "用户名: ",
                 modifier = Modifier.constrainAs(userNameRef) {
                     start.linkTo(parent.start)
-                    bottom.linkTo(centerGuidLine,10.dp)
+                    bottom.linkTo(centerGuidLine, 10.dp)
                 }
             )
             Text(
                 text = "密码: ",
                 modifier = Modifier.constrainAs(passwdRef) {
                     start.linkTo(parent.start)
-                    top.linkTo(centerGuidLine,10.dp)
+                    top.linkTo(centerGuidLine, 10.dp)
                 }
             )
             OutlinedTextField(
@@ -194,7 +204,7 @@ fun ConstraintLayoutDemo() {
                 modifier = Modifier.constrainAs(userNameInRef) {
                     start.linkTo(verticalBarrier, 10.dp)
                     top.linkTo(userNameRef.top)
-                    bottom.linkTo(centerGuidLine,10.dp) //放在引导线下上面，10dp
+                    bottom.linkTo(centerGuidLine, 10.dp) //放在引导线下上面，10dp
                     height = Dimension.fillToConstraints
                 }
             )
@@ -203,7 +213,7 @@ fun ConstraintLayoutDemo() {
                 onValueChange = {},
                 modifier = Modifier.constrainAs(passwdInRef) {
                     start.linkTo(verticalBarrier, 10.dp)
-                    top.linkTo(centerGuidLine,10.dp) //放在引导线下面，10dp
+                    top.linkTo(centerGuidLine, 10.dp) //放在引导线下面，10dp
                     bottom.linkTo(passwdRef.bottom)
                     height = Dimension.fillToConstraints
                 }
@@ -219,16 +229,16 @@ fun ConstraintLayoutDemo() {
         ConstraintLayout(
             modifier = Modifier.fillMaxWidth().height(150.dp)
         ) {
-            val (start,center,end) = createRefs()
+            val (start, center, end) = createRefs()
             //设置水平Chain
-            createHorizontalChain(start,center,end, chainStyle = ChainStyle.Packed)
-            Text(text = "start", modifier = Modifier.padding(horizontal = 5.dp).constrainAs(start){
+            createHorizontalChain(start, center, end, chainStyle = ChainStyle.Packed)
+            Text(text = "start", modifier = Modifier.padding(horizontal = 5.dp).constrainAs(start) {
                 top.linkTo(parent.top)
             })
-            Text(text = "center", modifier = Modifier.padding(horizontal = 5.dp).constrainAs(center){
+            Text(text = "center", modifier = Modifier.padding(horizontal = 5.dp).constrainAs(center) {
                 top.linkTo(parent.top)
             })
-            Text(text = "end", modifier = Modifier.padding(horizontal = 5.dp).constrainAs(end){
+            Text(text = "end", modifier = Modifier.padding(horizontal = 5.dp).constrainAs(end) {
                 top.linkTo(parent.top)
             })
         }
@@ -239,13 +249,134 @@ fun ConstraintLayoutDemo() {
 /**
  * compose脚手架示例
  */
-fun scaffoldDemo() {
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldDemo() {
 
-    Scaffold(
-        topBar = {},
-        bottomBar = {}
-    ) {
-        it.calculateBottomPadding()
+    //ModalNavigationDrawer
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    val items = listOf(Icons.Default.Favorite, Icons.Default.Face, Icons.Default.Email)
+    val selectedItem = remember { mutableStateOf(items[0]) }
+
+
+    //bottomBar
+    var navigationBarSelectedItem by remember { mutableIntStateOf(0) }
+    val navigationBarItems = listOf("首页", "发现", "喜欢", "我")
+
+    //抽屉导航
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+//        scrimColor = Color.Red,
+        drawerContent = {
+            //抽屉界面
+            ModalDrawerSheet(modifier = Modifier.fillMaxWidth(0.8f)) {
+                Text(
+                    text = "标题",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(30.dp)
+                )
+                items.forEachIndexed { index, item ->
+                    val isMail = index == 2
+
+                    NavigationDrawerItem(
+                        label = {
+                            val name = when (index) {
+                                0 -> "收藏文章"
+                                1 -> "粉丝"
+                                2 -> "未读邮件"
+                                else -> "unknown"
+                            }
+                            Text(text = name)
+                        },
+                        selected = item == selectedItem.value,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            selectedItem.value = item
+                        },
+                        icon = {
+                            if (isMail) {
+                                BadgedBox(
+                                    badge = {
+                                        Badge {
+                                            Text("8", Modifier.semantics { contentDescription = "8 new notifications" })
+                                        }
+                                    }
+                                ) {
+                                    Icon(item, contentDescription = null)
+                                }
+                            } else {
+                                Icon(item, contentDescription = null)
+                            }
+                        },
+                        badge = {
+                            if (!isMail) {
+                                when (index) {
+                                    0 -> Text("5人")
+                                    1 -> Text("123篇")
+                                }
+                            }
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                }
+            }
+        },
+
+        ) {
+        //这里是收起抽屉后的界面
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text("首页") },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                scope.launch { drawerState.open() }
+                            }
+                        ) {
+                            Icon(imageVector = Icons.Filled.Menu, contentDescription = "menu-------")
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+//                                Toast.makeText( LocalContext.current, "action icon clicked", Toast.LENGTH_LONG)
+//                                    .show()
+                            }
+                        ) {
+                            Icon(imageVector = Icons.Filled.Person, contentDescription = "person-------")
+                        }
+                    }
+                )
+            },
+            bottomBar = {
+                NavigationBar {
+                    navigationBarItems.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            selected = index == navigationBarSelectedItem,
+                            onClick = { navigationBarSelectedItem = index },
+                            label = { Text(item) },
+                            icon = {
+                                if (index == navigationBarSelectedItem) {
+                                    Icon(imageVector = Icons.Filled.Star, contentDescription = item)
+                                } else {
+                                    Icon(imageVector = Icons.Filled.Favorite, contentDescription = item)
+                                }
+
+                            }
+
+                        )
+                    }
+                }
+            }
+        ) {
+            Row {
+
+            }
+        }
+
     }
 }
 

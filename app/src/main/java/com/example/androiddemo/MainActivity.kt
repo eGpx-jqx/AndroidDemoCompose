@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
 
-    ConstraintLayoutDemo()
+    ScaffoldDemo()
 }
 
 @Preview(showBackground = true)
