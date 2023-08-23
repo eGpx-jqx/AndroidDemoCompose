@@ -4,29 +4,24 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.androiddemo.MainActivity
 import com.example.androiddemo.R
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 
 
 /**
@@ -249,7 +244,7 @@ fun ConstraintLayoutDemo() {
 /**
  * compose脚手架示例
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "ShowToast")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldDemo() {
@@ -264,6 +259,18 @@ fun ScaffoldDemo() {
     //bottomBar
     var navigationBarSelectedItem by remember { mutableIntStateOf(0) }
     val navigationBarItems = listOf("首页", "发现", "喜欢", "我")
+
+
+    //snackBar
+    val snackbarHostState = remember { SnackbarHostState() }
+
+
+    //获取当前环境上下文
+    val context = LocalContext.current
+
+    //底部模态展示
+    val sheetState = rememberModalBottomSheetState()
+    val openScaffoldState = remember { mutableStateOf(false) }
 
     //抽屉导航
     ModalNavigationDrawer(
@@ -327,6 +334,7 @@ fun ScaffoldDemo() {
         ) {
         //这里是收起抽屉后的界面
         Scaffold(
+            //头部
             topBar = {
                 CenterAlignedTopAppBar(
                     title = { Text("首页") },
@@ -342,8 +350,33 @@ fun ScaffoldDemo() {
                     actions = {
                         IconButton(
                             onClick = {
-//                                Toast.makeText( LocalContext.current, "action icon clicked", Toast.LENGTH_LONG)
-//                                    .show()
+                                scope.launch {
+                                    if (snackbarHostState.currentSnackbarData == null) {
+                                        val snackbar = snackbarHostState.showSnackbar(
+                                            "当前未登录,是否登录? ",
+                                            "确认",
+                                            true,
+                                            SnackbarDuration.Indefinite
+
+                                        )
+                                        when (snackbar) {
+                                            SnackbarResult.Dismissed -> Toast.makeText(
+                                                context,
+                                                "未登录",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+
+                                            SnackbarResult.ActionPerformed -> Toast.makeText(
+                                                context,
+                                                "登录失败",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    } else {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                    }
+
+                                }
                             }
                         ) {
                             Icon(imageVector = Icons.Filled.Person, contentDescription = "person-------")
@@ -351,6 +384,7 @@ fun ScaffoldDemo() {
                     }
                 )
             },
+            //底部
             bottomBar = {
                 NavigationBar {
                     navigationBarItems.forEachIndexed { index, item ->
@@ -370,10 +404,46 @@ fun ScaffoldDemo() {
                         )
                     }
                 }
+            },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        openScaffoldState.value = !openScaffoldState.value
+                    }
+                ) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                }
             }
         ) {
             Row {
 
+                if (openScaffoldState.value) {
+                    ModalBottomSheet(
+                        sheetState = sheetState,
+                        onDismissRequest = { openScaffoldState.value = false }
+                    ) {
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Swipe up to expand sheet")
+                            Spacer(Modifier.height(80.dp))
+                            Text("Sheet content")
+                            Spacer(Modifier.height(20.dp))
+                            Button(
+                                onClick = {
+                                    scope.launch { sheetState.partialExpand() }
+                                }
+                            ) {
+                                Text("Click to collapse sheet")
+                            }
+                            Spacer(Modifier.height(500.dp))
+                        }
+                    }
+                }
             }
         }
 
