@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.androiddemo.ui.theme.AndroidDemoTheme
+import com.example.androiddemo.ui.theme.customExtraValue
 import com.example.androiddemo.widget.*
 import com.example.androiddemo.widget.ArticleCardDemoPeople
 
