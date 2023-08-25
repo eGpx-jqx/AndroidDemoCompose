@@ -9,10 +9,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,11 +18,11 @@ import androidx.compose.ui.unit.dp
 fun AnimatedProgressDemo() {
 
     //进度值
-    val progress = remember { mutableStateOf(0.1f) }
+    val progress = remember { mutableFloatStateOf(0.1f) }
 
     //动画
     val animatedProgress by animateFloatAsState(
-        targetValue = progress.value,
+        targetValue = progress.floatValue,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         label = "label"
     )
@@ -37,7 +34,7 @@ fun AnimatedProgressDemo() {
         )
         Spacer(Modifier.requiredHeight(30.dp))
         OutlinedButton(
-            onClick = { if (progress.value < 1f) progress.value += 0.1f }
+            onClick = { if (progress.floatValue < 1f) progress.floatValue += 0.1f }
         ) {
             Text(text = "增加进度")
         }
