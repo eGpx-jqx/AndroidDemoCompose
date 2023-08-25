@@ -3,11 +3,7 @@ package com.example.androiddemo.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
@@ -61,6 +57,14 @@ fun AndroidDemoTheme(
       }
     }
 
+    /**
+     * staticCompositionLocal及CompositionLocal都会创建当前节点及子节点可用全局变量，但是staticCompositionLocal是其数据变化则内部会全部重组，  CompositionLocal则是数据发生变更则仅使用到其值的子节点会发生重组
+     * 1：在这里传递自定义的 颜色，字体，形状给到MaterialTheme方法
+     * -》 此方法将remember缓存传递的对象（如colorScheme）
+     * -》通过CompositionLocalProvider的方式将被缓存的对象赋值给对应的localxxx当前节点全局对象（staticCompositionLocal或CompositionLocal类型）
+     * 2：MaterialTheme.colorScheme.background这种访问将访问到当前root节点的localxxx数据，也就是传输-缓存-最后赋值给localxxx的变量，  如 colorScheme
+     * 3：2的访问方式 MaterialTheme存在一个单例，实际 访问到了localxxx
+     */
     MaterialTheme(
       colorScheme = colorScheme,
       typography = Typography,
