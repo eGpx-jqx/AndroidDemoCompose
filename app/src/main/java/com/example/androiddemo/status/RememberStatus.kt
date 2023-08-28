@@ -98,6 +98,7 @@ class CounterViewModel : ViewModel() {
 }
 
 //使用的地方
+@Composable
 fun showCounter() {
     val viewModel: CounterViewModel = viewModel()
     CounterScreen(viewModel.counter, viewModel.inc)
