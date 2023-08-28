@@ -1,10 +1,7 @@
 package com.example.androiddemo.widget
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -30,6 +27,7 @@ fun AnimatedProgressDemo() {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceAround) {
         //圆形进度条指示器
         CircularProgressIndicator(
+            modifier = Modifier.size(30.dp).paddingFromBaseline(top = 200.dp),
             progress = animatedProgress //如果不设置process,则进度条会一直加载
         )
         Spacer(Modifier.requiredHeight(30.dp))
