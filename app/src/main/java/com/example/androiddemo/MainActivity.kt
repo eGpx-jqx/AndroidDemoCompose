@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
 
-    LazyListViewDemo()
+    AnimatedProgressDemo()
 }
 
 @Preview(showBackground = true)
