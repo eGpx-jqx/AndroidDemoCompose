@@ -3,7 +3,9 @@ package com.example.androiddemo.sideeffect
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
@@ -113,11 +115,54 @@ fun RememberCoroutineScopeDemo1(key: Any?) {
 @Composable
 fun RememberUpdatedStateDemo(onTimeOut: () -> Unit) {
     //remember + mutableState  则此数据在重组期间从缓存拿到
-    val currentOnTimeOut  by rememberUpdatedState(onTimeOut)
+    val currentOnTimeOut by rememberUpdatedState(onTimeOut)
     //此副作用生命周期同RememberUpdatedStateDemo一样
     //传参Unit, 不会随重组而重新执行
     LaunchedEffect(Unit) {
         delay(2000)
         currentOnTimeOut() //用了rememberUpdatedState, 此处总是能获取到最新的数据
     }
+}
+
+
+//==============================snapshotFlow====================
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun snapshotFlowDemo() {
+    val pagerState = rememberPagerState() { 1 }
+
+    LaunchedEffect(Unit) {
+        //snapshotFlow将状态转为Coroutine Flow .   通过 快照 系统订阅状态变化
+        snapshotFlow { pagerState.currentPage }.collect {
+            // 一但pagerState.currentPage发生变更,这里立刻会收集到数据并执行代码流程
+        }
+    }
+}
+
+//=====================================produceState================================
+@Composable
+fun loadNetImage(url: String, imageRepository: (String) -> ByteArray?): State<ByteArray> {
+    //将外部数据转为状态, 当url或imageRepository变更时会导致重新计算value值
+    val defaule = ByteArray(0)
+    return produceState(defaule, url, imageRepository) {
+        value = imageRepository(url) ?: defaule
+    }
+}
+
+
+
+
+
+
+
+
+
+//====================================derivedStateOf=======================================
+@Composable
+fun DerivedStateOfDemo() {
+    val postList = remember { mutableStateListOf<String>()  }
+    val keyWord by remember { mutableStateOf("") }
+
+    //对postList过滤, 结果整合为一个state
+    val result by remember { derivedStateOf { postList.filter { it.contains(keyWord,false) } } }
 }
