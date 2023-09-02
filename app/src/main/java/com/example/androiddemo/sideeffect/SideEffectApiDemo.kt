@@ -1,4 +1,4 @@
-package com.example.androiddemo
+package com.example.androiddemo.sideeffect
 
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
