@@ -100,6 +100,7 @@ fun RememberCoroutineScopeDemo(snackBarState: SnackbarHostState) {
  * 用rememberCoroutineScope和DisposableEffect实现 LaunchedEffect
  * 以下等价于 LaunchedEffect(key){run job}
  */
+@Composable
 fun RememberCoroutineScopeDemo1(key: Any?) {
     val scoop = rememberCoroutineScope()
     DisposableEffect(key) {
