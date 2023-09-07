@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.androiddemo.layout.TextWithFirstBaseLineOnTop
 import com.example.androiddemo.ui.theme.AndroidDemoTheme
 import com.example.androiddemo.ui.theme.customExtraValue
 import com.example.androiddemo.widget.*
@@ -31,7 +32,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
 
-    AnimatedProgressDemo()
+    TextWithFirstBaseLineOnTop()
 }
 
 @Preview(showBackground = true)
