@@ -1,10 +1,14 @@
 package com.example.androiddemo.layout
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -68,6 +72,7 @@ fun MyOwnColumn(
         }
     }
 }
+
 //使用
 @Composable
 fun TextMyOwnColumn() {
@@ -83,4 +88,20 @@ fun TextMyOwnColumn() {
 }
 
 //=======================固有特性测量intrinsic==================
+/**
+ * 内置固有特性测量,  只能对已经适配固有特性测量的内置组件使用IntrinsicSize. Min或IntrinsicSize. Max，否则程序运行时会crash.
+ */
+@Composable
+fun TwoRext() {
+    Row(
+        modifier = Modifier.height(IntrinsicSize.Min)  //Row组件使用内部高度大小最小值()固有特性测量 ,以下是满足text的高度.
+    ) {
+        Text("Hi android", modifier = Modifier.weight(1f).padding(start = 4.dp).wrapContentWidth(Alignment.Start))
+        Divider(modifier = Modifier.width(4.dp).fillMaxHeight().background(Color.Red)) //直接使用父约束的最大高度
+        Text("here", modifier = Modifier.weight(1f).padding(end = 4.dp).wrapContentWidth(Alignment.End))
+    }
+}
+/**
+ * 自定义固有特性测量
+ */
 
