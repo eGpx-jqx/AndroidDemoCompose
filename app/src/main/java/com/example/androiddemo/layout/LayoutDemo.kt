@@ -10,8 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.*
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.layoutId
 
 
 //==================================layout来模拟实现paddingFromBaseLine========================
@@ -50,6 +52,7 @@ fun TextWithFirstBaseLineOnTop() {
 
 
 //============================组件下所有子组件的自定义布局,  模拟实现Column=====================
+@Composable
 fun MyOwnColumn(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
@@ -101,7 +104,63 @@ fun TwoRext() {
         Text("here", modifier = Modifier.weight(1f).padding(end = 4.dp).wrapContentWidth(Alignment.End))
     }
 }
+
 /**
  * 自定义固有特性测量
  */
+@Composable
+fun IntrinSicRow(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Layout(
+        modifier = modifier,
+        content = content,
+        measurePolicy = object : MeasurePolicy {
+            override fun MeasureScope.measure(measurables: List<Measurable>, constraints: Constraints): MeasureResult {
+                //copy一个最小宽度为0的约束.
+                val constraintsCopy = constraints.copy(minWidth = 0)
+                val textPlaceables = measurables.filter { "text" == it.layoutId }.map {
+                    it.measure(constraints)
+                }
+                //divider分割使用宽度0-max的约束, 以便自定义它的宽度
+                val dividerPlaceables = measurables.filter { "divider" == it.layoutId }.map {
+                    it.measure(constraintsCopy)
+                }
 
+                val posx = constraints.maxWidth / 2
+                return layout(constraints.maxWidth,constraints.maxHeight) {
+                    textPlaceables.forEach {
+                        it.placeRelative(0,0)
+                    }
+                    //divider摆放在中间
+                    dividerPlaceables.forEach {
+                        it.placeRelative(posx,0)
+                    }
+                }
+            }
+
+            //当使用Modifier.height(IntrinsicSize.Min)中IntrinsicSize.Min时, 实际就是调用此方法来获取内部最小height
+            override fun IntrinsicMeasureScope.minIntrinsicHeight(
+                measurables: List<IntrinsicMeasurable>,
+                width: Int
+            ): Int {
+                var maxHeight = 0
+                measurables.forEach {
+                    //遍历子组件, 获取子组件的最大高度, 将此高度配置成父组件的最大内部固有特性高度
+                    maxHeight = it.maxIntrinsicHeight(width).coerceAtLeast(maxHeight)
+                }
+                return maxHeight
+            }
+        }
+    )
+}
+
+//使用
+@Composable
+fun IntrinSicRowUse() {
+    IntrinSicRow(
+        Modifier.fillMaxWidth().height(IntrinsicSize.Min)
+    ) {
+        Text("start", Modifier.wrapContentWidth(Alignment.Start).layoutId("text"))
+        Divider(Modifier.width(4.dp).fillMaxHeight().background(Color.Red).layoutId("divider"))
+        Text("end", Modifier.wrapContentWidth(Alignment.End).layoutId("text"))
+    }
+}
