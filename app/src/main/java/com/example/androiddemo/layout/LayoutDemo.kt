@@ -117,6 +117,7 @@ fun IntrinSicRow(modifier: Modifier = Modifier, content: @Composable () -> Unit)
             override fun MeasureScope.measure(measurables: List<Measurable>, constraints: Constraints): MeasureResult {
                 //copy一个最小宽度为0的约束.
                 val constraintsCopy = constraints.copy(minWidth = 0)
+                //text使用固定宽度->父约束最大宽度
                 val textPlaceables = measurables.filter { "text" == it.layoutId }.map {
                     it.measure(constraints)
                 }
@@ -130,7 +131,7 @@ fun IntrinSicRow(modifier: Modifier = Modifier, content: @Composable () -> Unit)
                     textPlaceables.forEach {
                         it.placeRelative(0,0)
                     }
-                    //divider摆放在中间
+                    //divider摆放在水平中间,x坐标使用posx
                     dividerPlaceables.forEach {
                         it.placeRelative(posx,0)
                     }
@@ -159,6 +160,7 @@ fun IntrinSicRowUse() {
     IntrinSicRow(
         Modifier.fillMaxWidth().height(IntrinsicSize.Min)
     ) {
+        //wrapContentWidth: 允许内容以其所需的宽度进行测量，而不考虑传入的测量minimum width constraint. 如果内容的测量尺寸小于最小宽度限制，则将其在最小宽度空间内align 。
         Text("start", Modifier.wrapContentWidth(Alignment.Start).layoutId("text"))
         Divider(Modifier.width(4.dp).fillMaxHeight().background(Color.Red).layoutId("divider"))
         Text("end", Modifier.wrapContentWidth(Alignment.End).layoutId("text"))
